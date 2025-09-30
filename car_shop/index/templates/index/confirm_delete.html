@@ -1,0 +1,14 @@
+{% extends "index/basic.html" %}
+{% block title %}Delete car{% endblock %}
+
+{% block content %}
+<main class="container py-4">
+  <h1 class="h4">Delete car</h1>
+  <p>Are you sure you want to delete "{{ object }}"? This action cannot be undone.</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, delete</button>
+    <a href="{% url 'car_detail' object.pk %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</main>
+{% endblock %}

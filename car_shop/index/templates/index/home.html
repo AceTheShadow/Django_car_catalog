@@ -1,0 +1,81 @@
+{% extends "index/basic.html" %}
+
+{% block title %}Car shop{% endblock %}
+
+{% block content %}
+    <main>
+      <div class="container py-3 d-flex justify-content-end">
+        {% if request.user.is_authenticated %}
+          <a href="{% url 'my_cars' %}" class="btn btn-primary">My Cars</a>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn-outline-primary">Log in</a>
+        {% endif %}
+      </div>
+
+      <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% for car in cars %}
+            <div class="col">
+              <div class="card shadow-sm">
+                  {% with primary=car.primary_image %}
+                    {% if primary %}
+                      <img class="bd-placeholder-img card-img-top" src="{{ primary.thumbnail_url|default:primary.name.url }}" alt="Primary image" width="200">
+                    {% else %}
+                      <img src="/static/placeholder.jpg" alt="No image" width="200">
+                    {% endif %}
+                  {% endwith %}
+
+
+
+                <div class="card-body">
+                  <p class="card-text">
+                    <strong>{{ car.model }} {{ car.body_type }}</strong> ({{ car.year }}) - ${{ car.price }}
+                  </p>
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <div class="btn-group">
+                          <!-- View button (everyone can see) -->
+                          <a href="{% url 'car_detail' car.pk %}" class="btn btn-sm btn-outline-secondary">
+                            View
+                          </a>
+
+                          <!-- Edit button (only show if the logged-in user is the owner) -->
+                          {% if car.owner == request.user %}
+                            <a href="{% url 'car_edit' car.pk %}" class="btn btn-sm btn-outline-secondary">
+                              Edit
+                            </a>
+                          {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {% endfor %}
+            </div>
+          </div>
+        </div>
+
+    </main>
+
+<!--    <h1>Welcome to Car Shop</h1>-->
+<!--    <ul>-->
+<!--        {% for car in cars %}-->
+<!--            <li>-->
+<!--                <strong>{{ car.model }} {{ car.body_type }}</strong> ({{ car.year }}) - ${{ car.price }}-->
+<!--                <ul>-->
+<!--                    <li>Color: {{ car.color }}</li>-->
+<!--                    <li>Gearbox: {{ car.gearbox_type }}</li>-->
+<!--                    <li>Mileage: {{ car.mileage }}</li>-->
+<!--                    <li>Engine: {{ car.engine_capacity }}L {{ car.fuel_type }}</li>-->
+<!--                </ul>-->
+<!--                <p>{{ car.description }}</p>-->
+<!--                {% if car.image %}-->
+<!--                    <img src="{{ car.image.url }}" width="200" alt="{{ car.brand }} {{ car.model }}">-->
+<!--                {% endif %}-->
+<!--            </li>-->
+<!--        {% endfor %}-->
+<!--    </ul>-->
+{% endblock %}

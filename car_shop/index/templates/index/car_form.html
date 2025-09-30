@@ -1,0 +1,68 @@
+{% extends "index/basic.html" %}
+{% block title %}{% if form.instance.pk %}Edit car{% else %}Create car{% endif %}{% endblock %}
+
+{% block content %}
+<main class="container py-4">
+  <h1 class="h4 mb-3">{% if form.instance.pk %}Edit car{% else %}Create car{% endif %}</h1>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="mb-4">
+      {{ form.non_field_errors }}
+      {% for field in form %}
+        <div class="mb-3">
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}
+            <div class="form-text">{{ field.help_text }}</div>
+          {% endif %}
+          {% for error in field.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <hr>
+
+    <div class="mb-3">
+      <h2 class="h6">Images</h2>
+      {{ image_formset.management_form }}
+      {{ image_formset.non_form_errors }}
+      {% for f in image_formset.forms %}
+        <div class="border rounded p-3 mb-3">
+          {{ f.id }}
+          {{ f.non_field_errors }}
+          <div class="mb-2">
+            <label class="form-label" for="{{ f.name.id_for_label }}">Image file</label>
+            {{ f.name }}
+            {% for error in f.name.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="form-check mb-2">
+            {{ f.is_primary }} <label class="form-check-label" for="{{ f.is_primary.id_for_label }}">Primary</label>
+          </div>
+          {% if f.instance.pk and f.instance.name %}
+            <div class="mb-2">
+              <img src="{{ f.instance.name.url }}" alt="Current" style="max-height: 120px;">
+            </div>
+          {% endif %}
+          {% if image_formset.can_delete %}
+            <div class="form-check">
+              {{ f.DELETE }} <label class="form-check-label" for="{{ f.DELETE.id_for_label }}">Delete</label>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+      <p class="text-muted">Tip: leave unused image rows empty.</p>
+    </div>
+
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-primary">Save</button>
+      <a href="{% if form.instance.pk %}{% url 'car_detail' form.instance.pk %}{% else %}{% url 'home' %}{% endif %}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</main>
+{% endblock %}

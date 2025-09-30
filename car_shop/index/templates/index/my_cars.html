@@ -1,0 +1,54 @@
+{% extends "index/basic.html" %}
+
+{% block title %}My Cars{% endblock %}
+
+{% block content %}
+<main class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 m-0">My Cars</h1>
+    <div>
+      <a href="{% url 'car_add' %}" class="btn btn-primary me-2">Create new car</a>
+      <a href="{% url 'logout' %}" class="btn btn-outline-secondary">Log out</a>
+    </div>
+  </div>
+
+  {% if cars %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+      {% for car in cars %}
+        <div class="col">
+          <div class="card shadow-sm">
+            {% with primary=car.images.all.0 %}
+              {% if primary %}
+                <img src="{{ primary.thumbnail_url|default:primary.name.url }}" alt="Primary image" width="200">
+              {% else %}
+                <img src="/static/placeholder.jpg" alt="No image" width="200">
+              {% endif %}
+            {% endwith %}
+
+            <div class="card-body">
+              <p class="card-text">
+                <strong>{{ car.model }} {{ car.body_type }}</strong> ({{ car.year }}) - ${{ car.price }}
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <a href="{% url 'car_detail' car.pk %}" class="btn btn-sm btn-outline-secondary">View</a>
+                  <a href="{% url 'car_edit' car.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                </div>
+                <form method="post" action="{% url 'car_delete' car.pk %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this car?');">Delete</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      You haven't created any cars yet.
+      <a href="{% url 'car_add' %}" class="alert-link">Create your first car</a>.
+    </div>
+  {% endif %}
+</main>
+{% endblock %}
