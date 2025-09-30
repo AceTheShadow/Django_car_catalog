@@ -1,0 +1,4 @@
+.env
+.venv
+index/migrations/*
+!index/migrations/__init__.py
